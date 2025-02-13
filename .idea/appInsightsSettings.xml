@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.vokrob.foodapp" />
+                  <option name="mobileSdkAppId" value="1:281366677395:android:229635500fb45affb34a66" />
+                  <option name="projectId" value="foodapp-94196" />
+                  <option name="projectNumber" value="281366677395" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
