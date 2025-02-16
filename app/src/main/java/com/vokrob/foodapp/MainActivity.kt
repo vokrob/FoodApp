@@ -6,13 +6,18 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,14 +30,19 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
@@ -45,6 +55,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import coil.compose.AsyncImage
+import com.vokrob.foodapp.Category.CategoryModel
+import com.vokrob.foodapp.ViewModel.MainViewModel
 
 class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,12 +100,115 @@ fun MainScreen() {
                     .verticalScroll(rememberScrollState())
                     .padding(paddingValues)
             ) {
+                val viewModel = MainViewModel()
+                val categories = remember { mutableStateListOf<CategoryModel>() }
+                var showCategoryLoading by remember { mutableStateOf(true) }
+
+                LaunchedEffect(Unit) {
+                    viewModel.loadCategory().observeForever {
+                        categories.clear()
+                        categories.addAll(it)
+                        showCategoryLoading = false
+                    }
+                }
+
                 NameAndProfile()
                 Search()
                 Banner()
+                CategorySection(categories, showCategoryLoading)
             }
         }
     )
+}
+
+@Composable
+fun CategorySection(
+    categories: SnapshotStateList<CategoryModel>,
+    showCategoryLoading: Boolean
+) {
+    Text(
+        text = "Categories",
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(horizontal = 16.dp)
+    )
+
+    if (showCategoryLoading) {
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    } else {
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp)
+        ) {
+            items(categories.size) { index ->
+                val category = categories[index]
+
+                ConstraintLayout(
+                    Modifier
+                        .width(75.dp)
+                        .wrapContentHeight()
+                        .background(
+                            color = Color(0xfffef4e5),
+                            shape = RoundedCornerShape(13.dp)
+                        )
+                ) {
+                    val (image, text) = createRefs()
+
+                    AsyncImage(
+                        model = (category.picUrl),
+                        contentDescription = "CategoryImage",
+                        modifier = Modifier
+                            .size(35.dp)
+                            .constrainAs(image) {
+                                top.linkTo(
+                                    anchor = parent.top,
+                                    margin = 10.dp
+                                )
+
+                                start.linkTo(
+                                    anchor = parent.start,
+                                    margin = 10.dp
+                                )
+
+                                end.linkTo(
+                                    anchor = parent.end,
+                                    margin = 10.dp
+                                )
+                            }
+                    )
+
+                    Text(
+                        text = category.title,
+                        color = Color.Black,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .height(30.dp)
+                            .constrainAs(text) {
+                                top.linkTo(
+                                    anchor = image.bottom,
+                                    margin = 8.dp
+                                )
+
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                                bottom.linkTo(parent.bottom)
+                            }
+                    )
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -150,10 +266,12 @@ fun Banner() {
                 .padding(vertical = 8.dp)
                 .constrainAs(buttonLayout) {
                     start.linkTo(image.end)
+
                     top.linkTo(
                         anchor = date.bottom,
                         margin = 8.dp
                     )
+
                     end.linkTo(date.end)
                     bottom.linkTo(parent.bottom)
                 }
