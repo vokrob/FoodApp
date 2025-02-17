@@ -1,4 +1,4 @@
-package com.vokrob.foodapp.Category
+package com.vokrob.foodapp.Model
 
 data class CategoryModel(
     val title: String = "",

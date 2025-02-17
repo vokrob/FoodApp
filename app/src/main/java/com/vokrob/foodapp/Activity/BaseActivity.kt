@@ -1,4 +1,4 @@
-package com.vokrob.foodapp
+package com.vokrob.foodapp.Activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

@@ -1,4 +1,4 @@
-package com.vokrob.foodapp
+package com.vokrob.foodapp.Activity
 
 import android.os.Bundle
 import androidx.compose.foundation.Image
@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.vokrob.foodapp.R
 
 class IntroActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
