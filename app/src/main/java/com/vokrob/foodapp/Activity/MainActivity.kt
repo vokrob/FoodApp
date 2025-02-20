@@ -73,6 +73,14 @@ class MainActivity : BaseActivity() {
 
         setContent {
             MainScreen(
+                onCartClick = {
+                    startActivity(
+                        Intent(
+                            this,
+                            CartActivity::class.java
+                        )
+                    )
+                },
                 onHomeClick = {
                     startActivity(
                         Intent(
@@ -109,7 +117,7 @@ fun MainScreen(
         bottomBar = { MyBottomBar() },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {},
+                onClick = { onCartClick() },
                 contentColor = Color.White,
                 backgroundColor = colorResource(R.color.orange)
             ) {
